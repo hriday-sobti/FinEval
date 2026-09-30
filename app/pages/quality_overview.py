@@ -46,19 +46,19 @@ def render_quality_overview():
         # KPI Cards (Compact Row)
         cols = st.columns(7)
         with cols[0]:
-            st.metric("Total Tests", f"{total_tests:,}")
+            st.metric("Total Tests", f"{total_tests:,}", help="Cumulative evaluations across all prompt versions and benchmark runs")
         with cols[1]:
-            st.metric("V4 Pass Rate", f"{latest_v4.pass_rate}%", delta=f"{latest_v4.pass_rate - metrics[0].pass_rate:.1f}% vs V1")
+            st.metric("V4 Pass Rate", f"{latest_v4.pass_rate}%", delta=f"{latest_v4.pass_rate - metrics[0].pass_rate:.1f}% vs V1", help="Responses passing all thresholds on V4 (score≥80%, groundedness≥3.0, safety≥3.0, zero critical failures) — evaluated on 200-case full benchmark")
         with cols[2]:
-            st.metric("Avg Quality Score", f"{overall_avg_score}%")
+            st.metric("Avg Quality Score", f"{overall_avg_score}%", help="Weighted average across 7 dimensions: Accuracy 20%, Groundedness 20%, Instruction Following 15%, Relevance 15%, Consistency 10%, Safety 10%, Clarity 10%")
         with cols[3]:
-            st.metric("Hallucination (F1)", f"{latest_v4.hallucination_rate}%", delta=f"{latest_v4.hallucination_rate - metrics[0].hallucination_rate:.1f}%", delta_color="inverse")
+            st.metric("Hallucination (F1)", f"{latest_v4.hallucination_rate}%", delta=f"{latest_v4.hallucination_rate - metrics[0].hallucination_rate:.1f}%", delta_color="inverse", help="Rate of responses containing fabricated facts, fees, timelines, or product features not in the knowledge base")
         with cols[4]:
-            st.metric("Instruction Fail (F2)", f"{latest_v4.instruction_failure_rate}%", delta=f"{latest_v4.instruction_failure_rate - metrics[0].instruction_failure_rate:.1f}%", delta_color="inverse")
+            st.metric("Instruction Fail (F2)", f"{latest_v4.instruction_failure_rate}%", delta=f"{latest_v4.instruction_failure_rate - metrics[0].instruction_failure_rate:.1f}%", delta_color="inverse", help="Rate of responses that ignored explicit behavioral constraints in the system prompt")
         with cols[5]:
-            st.metric("Critical Failures", f"{latest_v4.critical_failures}")
+            st.metric("Critical Failures", f"{latest_v4.critical_failures}", help="Responses with fabricated account status, prohibited financial advice, or omitted fraud escalation — automatically fail regardless of score")
         with cols[6]:
-            st.metric("Context Loss (F4)", f"{latest_v4.context_failure_rate}%", delta=f"{latest_v4.context_failure_rate - metrics[0].context_failure_rate:.1f}%", delta_color="inverse")
+            st.metric("Context Loss (F4)", f"{latest_v4.context_failure_rate}%", delta=f"{latest_v4.context_failure_rate - metrics[0].context_failure_rate:.1f}%", delta_color="inverse", help="Rate of multi-turn responses that dropped reference identifiers or prior conversation context")
 
         st.markdown("---")
 
@@ -66,7 +66,7 @@ def render_quality_overview():
         c1, c2 = st.columns(2)
 
         with c1:
-            st.markdown("##### 1. Prompt Version vs Observed Quality Score")
+            st.markdown("##### Average Quality Score by Prompt Version")
             df_perf = pd.DataFrame([m.model_dump() for m in metrics])
             fig_perf = px.bar(
                 df_perf,
@@ -80,9 +80,11 @@ def render_quality_overview():
             fig_perf.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
             fig_perf.update_layout(yaxis=dict(range=[0, 105]), showlegend=False, margin=dict(l=20, r=20, t=30, b=20), height=300)
             st.plotly_chart(fig_perf, width="stretch")
+            st.caption("V1–V3 evaluated on 60-case core benchmark. V4 evaluated on 200-case full benchmark. Pass rates are not directly comparable across benchmark sizes.")
+            st.caption("Key insight: The largest single-step score jump (+15.29 pts) occurred between V2 and V3, coinciding with the introduction of explicit grounding constraints.")
 
         with c2:
-            st.markdown("##### 2. Failure Type Distribution (Across Versions)")
+            st.markdown("##### Failure Type Distribution by Prompt Version")
             failures = session.query(FailureEvent).all()
             if failures:
                 df_fail = pd.DataFrame([{
@@ -100,13 +102,14 @@ def render_quality_overview():
                 )
                 fig_fail.update_layout(margin=dict(l=20, r=20, t=30, b=20), height=300)
                 st.plotly_chart(fig_fail, width="stretch")
+                st.caption("F1 (Hallucination) and F6 (Unsupported Certainty) dominated V1. F7 (Formatting) appears in V4 at low severity. Hallucination Trap scenarios (F1) remain unresolved across all versions — 0% pass rate on that category.")
             else:
                 st.caption("No failures recorded.")
 
         c3, c4 = st.columns(2)
 
         with c3:
-            st.markdown("##### 3. Failure Severity Distribution")
+            st.markdown("##### Failure Severity Distribution (All Versions)")
             if failures:
                 sev_counts = pd.Series([f.severity for f in failures]).value_counts().reset_index()
                 sev_counts.columns = ["severity", "count"]
@@ -120,11 +123,12 @@ def render_quality_overview():
                 )
                 fig_sev.update_layout(margin=dict(l=20, r=20, t=30, b=20), height=300)
                 st.plotly_chart(fig_sev, width="stretch")
+                st.caption("Critical severity events (27 of 63 total) are treated as automatic failures regardless of weighted score. This prevents a high-clarity response from passing despite containing fabricated account status.")
             else:
                 st.caption("No failure severity records.")
 
         with c4:
-            st.markdown("##### 4. Scenario Category vs Pass Rate (%)")
+            st.markdown("##### Scenario Category Pass Rate by Prompt Version")
             evals = session.query(Evaluation, Scenario.category).join(Scenario, Evaluation.scenario_id == Scenario.scenario_id).all()
             if evals:
                 df_cat = pd.DataFrame([{
@@ -146,6 +150,7 @@ def render_quality_overview():
                 )
                 fig_cat.update_layout(margin=dict(l=20, r=20, t=30, b=20), height=300, yaxis=dict(range=[0, 105]))
                 st.plotly_chart(fig_cat, width="stretch")
+                st.caption("V4 achieves 100% on Standard and Contradictory categories. Hallucination Trap records 0% pass rate across all versions — the benchmark's most significant remaining gap.")
             else:
                 st.caption("No category evaluation records.")
 
@@ -166,3 +171,11 @@ def render_quality_overview():
                 "Avg Latency (ms)": f"{m.average_latency_ms:.1f}ms",
             })
         st.dataframe(pd.DataFrame(table_data), width="stretch", hide_index=True)
+        st.markdown("---")
+        st.markdown("##### Methodology Note")
+        st.caption(
+            "V1, V2, and V3 were each evaluated on the 60-case core benchmark. "
+            "V4 was evaluated on the full 200-case benchmark. "
+            "Pass rates and failure counts therefore reflect different evaluation surfaces and should not be treated as a controlled A/B comparison. "
+            "The score progression (48.52% → 61.19% → 76.48% → 84.27%) is computed on each version's own benchmark run."
+        )
