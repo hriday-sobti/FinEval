@@ -170,3 +170,13 @@ FinEval/
 
 All customer queries, account numbers, reference tokens (`REF-`, `LN-`, `CLM-`), and institutional policies in this repository are synthetic and fictional. They are constructed solely to evaluate LLM response quality, failure modes, and prompt instructions under controlled operational conditions.
 
+---
+
+## Contributors
+
+* [Hriday Singh Sobti](https://github.com/hriday-sobti)
+
+## Languages
+
+* **Python (100.0%)**
+
