@@ -37,7 +37,12 @@ def render_failure_explorer():
             return
 
         # Filters
-        st.markdown("##### 1. Failure Event Filters")
+        st.markdown("##### Failure Event Filters")
+        st.caption(
+            "Filter by prompt version, failure type (F1–F8), severity, and domain. "
+            "Critical failures automatically fail evaluation regardless of weighted score. "
+            "Use the root-cause diagnostic below to understand why a specific response failed."
+        )
         f_cols = st.columns(4)
 
         all_versions = sorted(list(set(f[0].prompt_version for f in failures)))

@@ -30,7 +30,8 @@ def render_report_and_export():
 
     with get_db_session() as session:
         with tab1:
-            st.markdown("##### Executive Evaluation Report Summary")
+            st.markdown("##### Executive Evaluation Report")
+            st.caption("Rendered from the latest `scripts/generate_report.py` run. Shows weighted score trends, failure taxonomies (F1–F8), and version comparison matrices.")
             report_path = Path("reports/FinEval_Evaluation_Report.md")
             if report_path.exists():
                 with open(report_path, "r", encoding="utf-8") as f:
@@ -94,8 +95,8 @@ def render_report_and_export():
                 st.info("No evaluation runs available to sample audit cases.")
 
         with tab3:
-            st.markdown("##### Download Structured Analytical Exports")
-            st.caption("Exports use stable, production-grade schemas suitable for downstream BI or audit pipelines.")
+            st.markdown("##### Structured Data Exports")
+            st.caption("Each CSV is column-stable and queryable. `benchmark_results.csv` contains per-scenario scores; `failure_events.csv` has full diagnostic evidence; `prompt_comparison.csv` is the version matrix used in the report. Use these for further SQL or statistical analysis.")
 
             e_col1, e_col2 = st.columns(2)
 

@@ -46,7 +46,12 @@ def render_transcript_explorer():
             return
 
         # Filters
-        st.markdown("##### 1. Transcript Filters")
+        st.markdown("##### Transcript Filters")
+        st.caption(
+            "Select a conversation to view it turn-by-turn in chronological order. "
+            "Multi-turn scenarios are where F4 (Context Loss) failures occur — "
+            "look for turns where the model asks for information it was already given."
+        )
         c1, c2, c3, c4 = st.columns(4)
 
         all_vers = sorted(list(set(r.prompt_version for r in records)))

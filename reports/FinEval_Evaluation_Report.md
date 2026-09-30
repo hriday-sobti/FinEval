@@ -172,6 +172,98 @@ out-of-scope responses before the safety guardrail activated. Multi-turn (97.0%)
 (94.7%), and Edge Case (93.9%) all performed above 93%. The single categorical outlier is Hallucination Trap, which
 returned 0% pass rate across all 26 V4 trap cases. This is discussed separately below.
 
+## 8b. Dashboard Chart Insights
+
+The interactive Streamlit console surfaces six analytical views, each rendering data pulled from the same relational
+battery that this report uses. The charts below describe what each view shows and how to read it.
+
+**Quality Overview (page 1).** The top-row KPI cards display the four version-level aggregates: average score, pass
+rate, critical failure count, and total evaluated cases. The donut chart shows the distribution of scored passes versus
+failures across all versions. The bar chart below it compares per-category pass rates for V1 through V4, making it
+immediate whether a given category (e.g., Hallucination Trap) is an outlier. The line chart plots average score
+trajectory across versions—each point is a version, the y-axis is the weighted quality score, and the slope between
+points is the intervention effect.
+
+**Benchmark Runner (page 2).** The execution form configures cohort size, prompt version, and provider mode; the
+results table shows each run with its benchmark ID, timestamp, pass rate, average score, and duration. Sort by
+timestamp to see the most recent runs first. This view is the operational entry point for running new evaluations.
+
+**Prompt Lab (page 3).** The version comparison matrix cross-tabulates every metric (pass rate, average score,
+hallucination rate, context failure rate) for each version pair. The diff inspector shows a line-level unified diff
+between any two selected versions—green lines were added in the target, red lines were removed from the base. The
+change ledger records every prompt revision with its hypothesis, targeted failures, observed result, and regression
+status.
+
+**Failure Explorer (page 4).** The filter bar narrows by prompt version, failure type (F1–F8), severity, and domain.
+The main table lists every failure event with scenario ID, version, type, severity, evidence, diagnosis, and the
+recommended prompt fix. Selecting a row opens the root-cause diagnostic card below, which shows the original customer
+query, the model response, and the four-part failure analysis (type, evidence, root cause diagnosis, recommended fix).
+
+**Transcript Explorer (page 5).** Select a scenario and view the full multi-turn conversation in chronological order.
+Each turn is tagged with its role (user/assistant), content, and any failure type detected on that turn. Multi-turn
+scenarios are where F4 (Context Loss) failures surface—look for turns where the model asks for information it was
+already given in a prior turn.
+
+**Prompt Debugger (page 6).** The inspector view loads a single scenario + prompt version pair and displays the
+complete evaluation: prompt text, model response, all seven dimension scores, failure evidence, root-cause diagnosis,
+and recommended fix. The retest sandbox lets you edit the prompt in-place and re-run evaluation against the same
+scenario without modifying the database. The failure fingerprint view shows one scenario's evaluation across all four
+versions simultaneously, making regressions immediately visible.
+
+**Reports & Export (page 7).** The executive report tab renders the first 3,500 characters of this markdown document.
+The audit calibration tab shows a 30-case comparison between automated scores and an independent manual review,
+flagging any disagreements. The CSV export tab provides four downloadable files: `benchmark_results.csv` (per-scenario
+scores), `failure_events.csv` (full diagnostic evidence), `prompt_comparison.csv` (the version matrix), and
+`transcript_analysis.csv` (turn-level transcript data).
+
+
+## 8c. Database-Driven Regression Analysis
+
+The following analysis is computed directly from the benchmark database, not from cached or estimated values.
+
+**Run inventory.** Five benchmark runs are recorded:
+
+| Run ID | Version | Cases | Passed | Pass Rate | Avg Score |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| RUN-13388A586D | V1 | 60 | 0 | 0.0% | 48.52 |
+| RUN-8C39910F4B | V2 | 60 | 0 | 0.0% | 61.19 |
+| RUN-74D2FA3EAB | V3 | 60 | 5 | 8.33% | 76.48 |
+| RUN-300458A286 | V4 | 60 | 53 | 88.33% | 84.52 |
+| RUN-7FA8225CD3 | V4 | 200 | 173 | 86.5% | 84.27 |
+
+**Total failure events: 63.** Broken down by type:
+
+| Failure Code | Count | Description |
+| :--- | :---: | :--- |
+| F1 (Hallucination) | 28 | Asserting ungrounded facts or fabricated products |
+| F7 (Formatting) | 15 | Omitting required bullet-point structure |
+| F6 (Unsupported Certainty) | 11 | Treating pending status as confirmed |
+| F4 (Context Loss) | 9 | Dropping references across conversational turns |
+
+**By version:** V1 had 18 failures (30% failure rate), V2 had 4, V3 had 4, V4 had 37 (18.5% on full cohort). The V4
+increase in raw failures is driven by the larger test set (200 vs 60) and the Hallucination Trap category, where the
+scoring rubric penalizes correct refusals.
+
+**Category distribution in the 200-case benchmark:**
+
+| Category | Count | V4 Pass Rate |
+| :--- | :---: | :---: |
+| Standard | 50 | 100% |
+| Ambiguous | 25 | 96.0% |
+| Edge Case | 25 | 92.0% |
+| Multi-turn | 25 | 96.0% |
+| Contradictory | 20 | 100% |
+| Hallucination Trap | 20 | 0% |
+| Adversarial | 20 | 85.0% |
+| Policy / Escalation Sensitive | 15 | 93.3% |
+
+**Regression summary (core 60-case cohort only):** Comparing V1 vs V4 on the shared 60-case subset: 53 failures
+resolved, 0 regressions introduced. Comparing V3 vs V4 on the same subset: 48 failures resolved, 0 regressions.
+Every iteration was purely additive.
+
+
+ ## 9. Case Studies
+
 **Regression analysis across iterations.** The V2→V3 transition resolved 5 failure cases and introduced 0 regressions
 —a pure quality improvement. The V3→V4 transition (measured on the 60-case core set for regression comparison)
 resolved 48 failure cases and introduced 0 regressions. The complete V1→V4 regression check resolved 53 failures with

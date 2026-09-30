@@ -34,7 +34,12 @@ def render_benchmark_runner():
     tab1, tab2 = st.tabs(["Execute Benchmark", "Upload Custom Benchmark CSV"])
 
     with tab1:
-        st.markdown("##### 1. Benchmark Execution Configuration")
+        st.markdown("##### Benchmark Execution Configuration")
+        st.caption(
+            "Mock mode uses deterministic scenario fixtures — no API key required. "
+            "Live mode calls a configured LLM provider and consumes tokens. "
+            "All runs are persisted to the relational database with full evaluation lineage."
+        )
 
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -120,7 +125,8 @@ def render_benchmark_runner():
             st.success(f"Benchmark run {run_id} finished and persisted to relational database.")
 
         st.markdown("---")
-        st.markdown("##### Recent Benchmark Runs in Database")
+        st.markdown("##### Recent Benchmark Runs")
+        st.caption("Each run stores full evaluation lineage: prompt version, scores, failures, and transcripts. Use the Failure Explorer to drill into any run.")
         with get_db_session() as s:
             runs = s.query(BenchmarkRun).order_by(BenchmarkRun.timestamp.desc()).limit(10).all()
             if runs:

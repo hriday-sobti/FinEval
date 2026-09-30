@@ -42,7 +42,12 @@ def render_prompt_debugger():
             return
 
         with tab1:
-            st.markdown("##### 1. Select Inspection Target")
+            st.markdown("##### Scenario & Prompt Inspector")
+            st.caption(
+                "Select a scenario and prompt version to inspect the full evaluation: "
+                "prompt text, model response, dimension scores, failure evidence, root-cause diagnosis, and recommended fix. "
+                "Edit the prompt in the sandbox below and retest immediately without touching the database."
+            )
             s_col1, s_col2 = st.columns(2)
             with s_col1:
                 sel_sc_id = st.selectbox(
@@ -172,8 +177,12 @@ def render_prompt_debugger():
                         st.success("Clean pass: No failures detected with the revised prompt instructions!")
 
         with tab2:
-            st.markdown("##### Failure Fingerprint Lineage (Section 43)")
-            st.caption("Inspect how a single operational scenario behaves across all four prompt versions (V1 → V2 → V3 → V4).")
+            st.markdown("##### Failure Fingerprint — Version Lineage")
+            st.caption(
+                "Shows exactly how one scenario evaluates across V1 → V2 → V3 → V4. "
+                "A resolved failure appears as PASS in later versions. A regression appears as FAIL after an earlier PASS. "
+                "Use this to verify that a prompt change actually fixed the targeted failure."
+            )
 
             fp_sc_id = st.selectbox("Select Scenario for Fingerprint", [s.scenario_id for s in scenarios], key="fp_select")
             try:

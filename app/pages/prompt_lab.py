@@ -56,7 +56,10 @@ def render_prompt_lab():
 
         with tab2:
             st.markdown("##### Visual Prompt Diff Inspector")
-            st.caption("Compare iterative changes between baseline and hardened operational prompts (e.g. V2 → V3 or V3 → V4).")
+            st.caption(
+                "Shows the exact line-level additions and deletions between two prompt versions. "
+                "V2→V3 introduced grounding constraints (+22 lines). V3→V4 added escalation directives and context retention rules."
+            )
 
             cd1, cd2 = st.columns(2)
             with cd1:
@@ -80,6 +83,7 @@ def render_prompt_lab():
                     st.metric("Net Change", f"{diff_res.added_lines_count - diff_res.deleted_lines_count:+d}")
 
                 st.markdown("###### Unified Line Diff")
+                st.caption("Green lines were added in the target version. Red lines were present in the base version and removed. Context lines are unchanged.")
                 # Render clean HTML diff block
                 diff_html = '<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 10px;">'
                 for d in diff_res.diff_lines:
@@ -93,8 +97,11 @@ def render_prompt_lab():
                 st.markdown(diff_html, unsafe_allow_html=True)
 
         with tab3:
-            st.markdown("##### Traceable Prompt Change Ledger")
-            st.caption("Experiments and observed benchmark impacts tracked systematically matching Section 41 specification.")
+            st.markdown("##### Prompt Change Ledger")
+            st.caption(
+                "Every prompt revision is recorded with its change hypothesis, targeted failure types, observed benchmark result, "
+                "and regression status. This makes the engineering history traceable rather than reconstructed from memory."
+            )
 
             ledgers = session.query(ChangeLedgerEntry).order_by(ChangeLedgerEntry.created_at.asc()).all()
             if ledgers:
