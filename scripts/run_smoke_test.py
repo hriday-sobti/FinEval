@@ -28,9 +28,10 @@ def run_smoke_test() -> bool:
     with get_db_session() as session:
         db_scenarios = session.query(Scenario).all()
         if not db_scenarios:
-            logger.error("No scenarios in database. Run seed_database.py first.")
-            return False
-
+            logger.info("Database empty. Auto-seeding core database entities for smoke test...")
+            from scripts.seed_database import seed_database
+            seed_database(run_benchmark=False)
+            db_scenarios = session.query(Scenario).all()
         scenarios = [
             ScenarioSchema(
                 scenario_id=s.scenario_id,

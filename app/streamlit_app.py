@@ -23,6 +23,8 @@ from app.pages.prompt_lab import render_prompt_lab
 from app.pages.quality_overview import render_quality_overview
 from app.pages.reports_and_export import render_report_and_export
 from app.pages.transcript_explorer import render_transcript_explorer
+from src.database.connection import get_db_session, init_db
+from src.database.models import Scenario
 
 # Configure wide layout and page metadata
 st.set_page_config(
@@ -34,6 +36,13 @@ st.set_page_config(
 
 # Apply Analyst Theme
 apply_analyst_styling()
+
+# Ensure database schema and seed data exist on startup if fresh clone
+init_db()
+with get_db_session() as _session:
+    if _session.query(Scenario).count() == 0:
+        from scripts.seed_database import seed_database
+        seed_database(run_benchmark=True)
 
 # Navigation
 st.sidebar.markdown("### **FinEval Console**")
@@ -50,7 +59,7 @@ page_selection = st.sidebar.radio(
         "Prompt Debugger",
         "Reports & Exports",
     ],
-    index=0
+    index=0,
 )
 
 st.sidebar.markdown("---")

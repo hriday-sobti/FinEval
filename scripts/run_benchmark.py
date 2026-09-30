@@ -5,7 +5,6 @@ Usage: python -m scripts.run_benchmark --level core --prompt V4 --model gpt-4o-m
 """
 
 import argparse
-import sys
 
 from src.database.connection import get_db_session, init_db
 from src.database.models import Scenario
@@ -29,9 +28,10 @@ def main():
     with get_db_session() as session:
         db_scenarios = session.query(Scenario).all()
         if not db_scenarios:
-            logger.error("No scenarios found in database. Run seed_database.py first.")
-            sys.exit(1)
-
+            logger.info("Database empty. Auto-seeding core database entities for benchmark...")
+            from scripts.seed_database import seed_database
+            seed_database(run_benchmark=False)
+            db_scenarios = session.query(Scenario).all()
         scenarios = [
             ScenarioSchema(
                 scenario_id=s.scenario_id,
