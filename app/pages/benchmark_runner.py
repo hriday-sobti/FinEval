@@ -136,7 +136,7 @@ def render_benchmark_runner():
                     "Avg Quality Score": f"{r.average_score}%",
                     "Duration": f"{r.duration_seconds:.1f}s",
                 } for r in runs])
-                st.dataframe(df_runs, use_container_width=True, hide_index=True)
+                st.dataframe(df_runs, width="stretch", hide_index=True)
             else:
                 st.caption("No benchmark runs recorded yet.")
 
@@ -163,7 +163,7 @@ def render_benchmark_runner():
             if is_valid:
                 st.success("CSV file passed all schema, category, and distribution checks. Ready for benchmarking.")
                 df_preview = pd.read_csv(temp_path)
-                st.dataframe(df_preview.head(5), use_container_width=True)
+                st.dataframe(df_preview.head(5), width="stretch")
             else:
                 st.error("Validation failed. Please correct the following errors before attempting benchmark execution:")
                 for err in errors[:8]:

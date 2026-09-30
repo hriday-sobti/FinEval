@@ -109,7 +109,7 @@ def render_prompt_lab():
                         "Observed Result": entry.observed_result,
                         "Regression Status": entry.regression_status,
                     })
-                st.dataframe(pd.DataFrame(ledger_data), use_container_width=True, hide_index=True)
+                st.dataframe(pd.DataFrame(ledger_data), width="stretch", hide_index=True)
             else:
                 # Fallback display of specification ledger
                 st.info("No recorded ledger entries in DB yet. Populating during database seed.")

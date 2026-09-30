@@ -87,7 +87,7 @@ def render_report_and_export():
                     })
 
                 df_audit = pd.DataFrame(audit_rows)
-                st.dataframe(df_audit, use_container_width=True, hide_index=True)
+                st.dataframe(df_audit, width="stretch", hide_index=True)
                 agree_rate = (sum(1 for r in audit_rows if r["Calibration"] == "AGREE") / len(audit_rows)) * 100.0
                 st.metric("Automated vs Manual Audit Agreement", f"{agree_rate:.1f}%", delta="Calibrated with 93.3% concordance")
             else:

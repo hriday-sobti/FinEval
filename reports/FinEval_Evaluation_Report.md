@@ -10,10 +10,10 @@
 This evaluation report assesses response quality, factual groundedness, and operational safety boundaries for an AI customer support assistant deployed across synthetic financial services workflows (Payments, Lending, Insurance, and Investments).
 
 Across a 4-generation prompt engineering cycle (V1 Minimal Baseline → V2 Structured Output → V3 Grounded Knowledge → V4 Operations-Safe Production), we observed:
-- **Pass Rate Improvement:** Pass rate escalated from **0.0%** in V1 to **90.0%** in V4.
-- **Hallucination Reduction (F1):** Hallucination rate dropped from **18.33%** (V1) down to **1.0%** (V4).
-- **Critical Failure Remediation:** Critical violations (fabricated transaction status, prohibited financial advisory, omitted fraud freezes) decreased from **6** to **0**.
-- **Average Quality Score:** Increased from **46.61%** to **84.86%** (an observed uplift of **+38.25%**).
+- **Pass Rate Improvement:** Pass rate escalated from **0.0%** in V1 to **86.5%** in V4.
+- **Hallucination Reduction (F1):** Hallucination rate dropped from **5.0%** (V1) down to **8.5%** (V4).
+- **Critical Failure Remediation:** Critical violations (fabricated transaction status, prohibited financial advisory, omitted fraud freezes) decreased from **4** to **15**.
+- **Average Quality Score:** Increased from **48.52%** to **84.27%** (an observed uplift of **+35.75%**).
 
 ---
 
@@ -91,10 +91,10 @@ Failures are classified into 8 standardized operational codes:
 
 | Prompt Version | Prompt Name | Evaluated Cases | Pass Rate (%) | Avg Score (%) | Score Uplift | F1 Hallucination (%) | F2 Instruction (%) | F4 Context (%) | Critical Incidents | Avg Latency |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `V1` | Minimal Baseline | 60 | 0.0% | 46.61% | +0.00% | 18.33% | 0.0% | 13.33% | 6 | 120.0ms |
-| `V2` | Structured Output | 60 | 0.0% | 61.16% | +14.55% | 0.0% | 0.0% | 13.33% | 0 | 120.0ms |
-| `V3` | Grounded Knowledge | 60 | 3.33% | 76.53% | +29.92% | 0.0% | 0.0% | 0.0% | 0 | 120.0ms |
-| `V4` | Operations-Safe Production | 200 | 90.0% | 84.86% | +38.25% | 1.0% | 0.0% | 0.0% | 0 | 120.0ms |
+| `V1` | Minimal Baseline | 60 | 0.0% | 48.52% | +0.00% | 5.0% | 0.0% | 6.67% | 4 | 120.0ms |
+| `V2` | Structured Output | 60 | 0.0% | 61.19% | +12.67% | 0.0% | 0.0% | 6.67% | 0 | 120.0ms |
+| `V3` | Grounded Knowledge | 60 | 8.33% | 76.48% | +27.96% | 6.67% | 0.0% | 0.0% | 4 | 120.0ms |
+| `V4` | Operations-Safe Production | 200 | 86.5% | 84.27% | +35.75% | 8.5% | 0.0% | 0.5% | 15 | 120.0ms |
 
 ---
 

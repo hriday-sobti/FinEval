@@ -79,7 +79,7 @@ def render_quality_overview():
             )
             fig_perf.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
             fig_perf.update_layout(yaxis=dict(range=[0, 105]), showlegend=False, margin=dict(l=20, r=20, t=30, b=20), height=300)
-            st.plotly_chart(fig_perf, use_container_width=True)
+            st.plotly_chart(fig_perf, width="stretch")
 
         with c2:
             st.markdown("##### 2. Failure Type Distribution (Across Versions)")
@@ -99,7 +99,7 @@ def render_quality_overview():
                     color_discrete_map={"V1": "#ef4444", "V2": "#f59e0b", "V3": "#0ea5e9", "V4": "#22c55e"}
                 )
                 fig_fail.update_layout(margin=dict(l=20, r=20, t=30, b=20), height=300)
-                st.plotly_chart(fig_fail, use_container_width=True)
+                st.plotly_chart(fig_fail, width="stretch")
             else:
                 st.caption("No failures recorded.")
 
@@ -119,7 +119,7 @@ def render_quality_overview():
                     hole=0.4
                 )
                 fig_sev.update_layout(margin=dict(l=20, r=20, t=30, b=20), height=300)
-                st.plotly_chart(fig_sev, use_container_width=True)
+                st.plotly_chart(fig_sev, width="stretch")
             else:
                 st.caption("No failure severity records.")
 
@@ -145,7 +145,7 @@ def render_quality_overview():
                     color_discrete_map={"V1": "#94a3b8", "V2": "#64748b", "V3": "#0ea5e9", "V4": "#16a34a"}
                 )
                 fig_cat.update_layout(margin=dict(l=20, r=20, t=30, b=20), height=300, yaxis=dict(range=[0, 105]))
-                st.plotly_chart(fig_cat, use_container_width=True)
+                st.plotly_chart(fig_cat, width="stretch")
             else:
                 st.caption("No category evaluation records.")
 
@@ -165,4 +165,4 @@ def render_quality_overview():
                 "Critical Failures": m.critical_failures,
                 "Avg Latency (ms)": f"{m.average_latency_ms:.1f}ms",
             })
-        st.dataframe(pd.DataFrame(table_data), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(table_data), width="stretch", hide_index=True)

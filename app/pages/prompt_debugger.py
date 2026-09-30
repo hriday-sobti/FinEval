@@ -196,7 +196,7 @@ def render_prompt_debugger():
                     })
 
                 if fp_data:
-                    st.dataframe(pd.DataFrame(fp_data), use_container_width=True, hide_index=True)
+                    st.dataframe(pd.DataFrame(fp_data), width="stretch", hide_index=True)
                     if fingerprint.resolved_at_version:
                         st.success(f"Issue verified resolved starting at prompt version: **{fingerprint.resolved_at_version}**")
                     if fingerprint.has_regressed:

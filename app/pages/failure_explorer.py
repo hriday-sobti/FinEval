@@ -81,7 +81,7 @@ def render_failure_explorer():
             })
 
         df_table = pd.DataFrame(df_rows)
-        st.dataframe(df_table, use_container_width=True, hide_index=True)
+        st.dataframe(df_table, width="stretch", hide_index=True)
 
         st.markdown("---")
         st.markdown("##### 2. 'Why Did This Response Fail?' Root Cause Diagnostic")
