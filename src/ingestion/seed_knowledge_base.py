@@ -397,7 +397,7 @@ KNOWLEDGE_ENTRIES = [
         "domain": "Investments",
         "topic": "SIP Pause Facility",
         "fact": "Investors may pause an active Systematic Investment Plan (SIP) for up to 3 consecutive months by submitting a request at least 7 days before the next debit date.",
-        "allowed_claims": ["SIP pause permitted for 1 to 3 months", "Must submit pause request 7 days before debit", "SIP auto-resumes after pause period expires"],
+        "allowed_claims": ["SIP pause permitted for 1 to 3 months", "Must submit pause request 7 days before debit", "SIP auto-restarts after pause period expires"],
         "prohibited_claims": ["Guarantee market timing returns from pausing SIP", "Charge penalty fees for pausing SIP", "Delete accumulated mutual fund units on pause"],
         "source_label": "Synthetic Knowledge Base"
     },
