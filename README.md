@@ -169,3 +169,11 @@ FinEval/
 ## Synthetic Data Notice
 
 All customer queries, account numbers, reference tokens (`REF-`, `LN-`, `CLM-`), and institutional policies in this repository are synthetic and fictional. They are constructed solely to evaluate LLM response quality, failure modes, and prompt instructions under controlled operational conditions.
+
+---
+
+## Contributor & Language Specification
+
+* **Primary Author & Contributor:** [Hriday Singh Sobti](https://github.com/hriday-sobti) (`hridaysobti@gmail.com`)
+* **Primary Implementation Language:** **Python (100%)** — Python 3.10+ (tested and verified across Python 3.10, 3.11, and 3.14)
+* **Query & Data Languages:** Advanced SQL (PostgreSQL & SQLite dialect implementations), YAML, DAX (Power BI Star-Schema)

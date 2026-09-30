@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Financial AI Response Quality & Prompt Operations Lab"
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [{ name = "FinEval Systems Team" }]
+authors = [{ name = "Hriday Singh Sobti", email = "hridaysobti@gmail.com" }]
 license = { text = "Apache-2.0" }
 dependencies = [
     "pydantic>=2.7.0",
