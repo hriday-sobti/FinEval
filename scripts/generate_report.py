@@ -34,7 +34,6 @@ def generate_reports():
         md_content = """# FinEval — Financial AI Response Quality & Prompt Operations Report
 **Document Type:** Formal Evaluation & Operational Quality Audit
 **Dataset:** Synthetic Financial Services Customer Support Interactions (v1.0)
-**Evaluation Date:** 2026-09-30
 **Status:** Audit Complete
 
 ---
