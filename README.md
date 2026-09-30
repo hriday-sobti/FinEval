@@ -173,6 +173,12 @@ Hallucination Trap is the one unresolved category gap in V4: 0 of 26 cases pass 
 
 ---
 
+## Contributors
+
+| Contributor | Role |
+| :--- | :--- |
+| [Hriday Singh Sobti](https://github.com/hriday-sobti) | Author &amp; Sole Contributor |
+
 ## Synthetic Data Notice
 
 All customer queries, account numbers, reference tokens (`REF-`, `LN-`, `CLM-`), and institutional policies in this repository are synthetic and fictional. They are constructed solely to evaluate LLM response quality, failure modes, and prompt instructions under controlled operational conditions.
