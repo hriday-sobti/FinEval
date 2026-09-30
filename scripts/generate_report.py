@@ -466,12 +466,23 @@ fabricating content.
             f.write(md_content)
         print(f"Generated Markdown report at {md_path}")
 
+        # Generate chart visualizations for PDF embedding
+        from scripts.charts import generate_charts
+        charts = generate_charts(Path("reports"))
+
         # PDF Generation using ReportLab
         try:
             from reportlab.lib import colors
             from reportlab.lib.pagesizes import letter
             from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-            from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+            from reportlab.platypus import (
+                Image,
+                Paragraph,
+                SimpleDocTemplate,
+                Spacer,
+                Table,
+                TableStyle,
+            )
 
             doc = SimpleDocTemplate(str(pdf_path), pagesize=letter, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
             styles = getSampleStyleSheet()
@@ -610,6 +621,14 @@ fabricating content.
             for bullet in analytical_bullets:
                 story.append(Paragraph(f"\u2022\u2002{bullet}", bullet_style))
             story.append(Spacer(1, 10))
+            story.append(Spacer(1, 6))
+            # ── Score Trajectory Chart ─────────────────────────────────────────
+            story.append(Paragraph("<b>Score Trajectory</b>", bullet_style))
+            story.append(Image(str(charts["score_trajectory"]), width=468, height=263))
+            story.append(Spacer(1, 8))
+            # ── Failure Composition Chart ───────────────────────────────────────
+            story.append(Paragraph("<b>Failure Composition by Version</b>", bullet_style))
+            story.append(Image(str(charts["failure_composition"]), width=468, height=263))
             story.append(Spacer(1, 10))
 
             # ── Dashboard Chart Insights ───────────────────────────────────────
@@ -752,6 +771,13 @@ fabricating content.
             ]))
             story.append(reg_t)
             story.append(Spacer(1, 14))
+            # ── Severity & Category Charts ───────────────────────────────────────
+            story.append(Paragraph("<b>Failure Severity Distribution</b>", bullet_style))
+            story.append(Image(str(charts["severity_donut"]), width=340, height=304))
+            story.append(Spacer(1, 6))
+            story.append(Paragraph("<b>V4 Pass Rate by Category</b>", bullet_style))
+            story.append(Image(str(charts["category_pass_rates"]), width=468, height=263))
+            story.append(Spacer(1, 14))
 
             # ── Measured Improvements ────────────────────────────────────────────
             story.append(Paragraph("Measured Improvements: V1 → V4", section_style))
@@ -798,6 +824,13 @@ fabricating content.
                 "fabricating content.",
                 callout_style
             ))
+            # ── V4 Dimension Profile Charts ──────────────────────────────────────
+            story.append(Paragraph("<b>V4 Dimension Profile (7-Rubric Radar)</b>", bullet_style))
+            story.append(Image(str(charts["v4_radar"]), width=350, height=350))
+            story.append(Spacer(1, 6))
+            story.append(Paragraph("<b>Dimension Score Heatmap (V1→V4)</b>", bullet_style))
+            story.append(Image(str(charts["dimension_heatmap"]), width=468, height=281))
+            story.append(Spacer(1, 14))
             story.append(Spacer(1, 10))
 
             # ── Limitations ──────────────────────────────────────────────────────
