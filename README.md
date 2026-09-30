@@ -1,5 +1,25 @@
 # FinEval — Financial AI Response Quality & Prompt Operations Lab
 
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Database](https://img.shields.io/badge/Database-SQLite_%26_PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](src/database/)
+[![Tests](https://img.shields.io/badge/Tests-229_Passing-2EA44F?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
+[![Power BI](https://img.shields.io/badge/Power_BI-Ready-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](data/powerbi/)
+[![Excel Model](https://img.shields.io/badge/Excel-Scenario_Model-107C41?style=for-the-badge&logo=microsoftexcel&logoColor=white)](data/fineval_scenario_model.xlsx)
+[![Author](https://img.shields.io/badge/Author-Hriday_Singh_Sobti-0F172A?style=for-the-badge&logo=github&logoColor=white)](https://github.com/hriday-sobti)
+
+## Deliverables
+
+* **Interactive Streamlit Decision Workbench**: Launch locally via `python -m streamlit run app/streamlit_app.py`
+* **Executive Evaluation Report (PDF)**: [`reports/FinEval_Evaluation_Report.pdf`](reports/FinEval_Evaluation_Report.pdf)
+* **Executive Evaluation Report (Markdown)**: [`reports/FinEval_Evaluation_Report.md`](reports/FinEval_Evaluation_Report.md)
+* **Excel Scenario & Sensitivity Model**: [`data/fineval_scenario_model.xlsx`](data/fineval_scenario_model.xlsx)
+* **Power BI Dimensional Star-Schema Data Model**: [`data/powerbi/`](data/powerbi/)
+* **Automated Master Test Suite (229 Tests)**: [`tests/test_fineval_master.py`](tests/test_fineval_master.py)
+
+---
+
+## Overview
+
 FinEval is an evaluation and prompt debugging workbench built to test, evaluate, diagnose, and iterate on LLMs handling financial customer interactions.
 
 In financial services (payments, consumer lending, retail insurance, and investments), deploying conversational assistants without continuous evaluation leads to operational failures: models fabricate transaction statuses, offer informal loan forgiveness, fail to instruct account freezes during active fraud, and drop reference identifiers across turns.
@@ -44,10 +64,11 @@ Regression Testing & Benchmark Uplift Audit
 
 ## Technical Stack
 
-- **Backend & Evaluation:** Python 3.11+, SQLAlchemy 2.0, Pydantic v2, Pandas, PyYAML, HTTPX
+- **Backend & Evaluation:** Python 3.10+, SQLAlchemy 2.0, Pydantic v2, Pandas, PyYAML, HTTPX
 - **Database:** SQLite (default for local zero-config runs), PostgreSQL (via Docker Compose)
+- **Data Modeling & BI:** Microsoft Excel (`fineval_scenario_model.xlsx`), Power BI Star-Schema (`data/powerbi/`)
 - **UI & Analytics:** Streamlit, Plotly
-- **Testing & Quality:** Pytest, Ruff
+- **Testing & Quality:** Pytest (229 passing tests), Ruff
 
 ---
 
@@ -95,7 +116,7 @@ python -m scripts.run_benchmark --level full --prompt V4
 
 ### 5. Running Tests & Linting
 ```bash
-# Run test suite
+# Run master test suite (229 passing tests)
 python -m pytest -v
 
 # Run linter
@@ -124,6 +145,8 @@ FinEval/
 │       └── reports_and_export.py  # Manual audit calibration and CSV downloads
 ├── config/               # Scoring weights, thresholds, and model parameters
 ├── data/                 # Benchmark scenarios, knowledge base, prompt versions
+│   ├── fineval_scenario_model.xlsx  # Excel scenario & sensitivity model
+│   └── powerbi/          # Star-schema dimensional tables for Power BI
 ├── docs/                 # Architecture, evaluation methodology, failure taxonomy
 ├── prompts/              # System prompt versions (V1, V2, V3, V4, Judge)
 ├── reports/              # Audit reports in Markdown and PDF
@@ -138,7 +161,7 @@ FinEval/
 │   ├── llm/              # Provider abstraction (Mock and Live implementations)
 │   ├── services/         # Bulk benchmark runner and execution pipeline
 │   └── utils/            # Centralized settings and structured logging
-└── tests/                # Pytest unit and error handling suites
+└── tests/                # Master test suite (229 automated tests)
 ```
 
 ---
