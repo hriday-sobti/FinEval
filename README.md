@@ -170,15 +170,3 @@ Hallucination Trap is the one unresolved category gap in V4: 0 of 26 cases pass 
 | Regression Testing | No regression visibility | Automated before/after comparison across prompt versions | V2→V3: 5 resolved, 0 regressions; V3→V4 (60-case): 48 resolved, 0 regressions |
 | Transcript Analysis | No cross-turn visibility | Per-scenario conversation viewer with entity retention tracking across turns | SC-101: V1 lost payment reference within one turn; V4 retains it and gives pending status |
 | Reporting | No structured output | Calibration audit (30 cases), SQL analytics with CTEs, Excel model, Power BI star-schema, PDF/Markdown report | Full audit trail from raw scenario to scored result stored in relational schema |
-
----
-
-## Contributors
-
-| Contributor | Role |
-| :--- | :--- |
-| [Hriday Singh Sobti](https://github.com/hriday-sobti) | Author &amp; Sole Contributor |
-
-## Synthetic Data Notice
-
-All customer queries, account numbers, reference tokens (`REF-`, `LN-`, `CLM-`), and institutional policies in this repository are synthetic and fictional. They are constructed solely to evaluate LLM response quality, failure modes, and prompt instructions under controlled operational conditions.
