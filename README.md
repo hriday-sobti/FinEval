@@ -1,21 +1,18 @@
 # FinEval — Financial AI Response Quality & Prompt Operations Lab
 
-> A specialized internal operations platform for systematically testing, diagnosing, improving, and regression-testing financial LLM assistants.
+FinEval is an evaluation and prompt debugging workbench built to test, evaluate, diagnose, and iterate on LLMs handling financial customer interactions.
 
----
+In financial services (payments, consumer lending, retail insurance, and investments), deploying conversational assistants without continuous evaluation leads to operational failures: models fabricate transaction statuses, offer informal loan forgiveness, fail to instruct account freezes during active fraud, and drop reference identifiers across turns.
 
-## 1. Practical Problem Addressed
-When customer-facing LLMs are deployed in financial services (payments, lending, insurance, wealth), conventional chat evaluations fail to protect operational integrity. Generative models hallucinate transaction outcomes, give unauthorized stock recommendations, fail to freeze compromised accounts during active fraud, and lose context across multi-turn interactions.
-
-**FinEval** implements a closed-loop engineering system:
+FinEval enforces a closed-loop engineering workflow:
 ```text
 Synthetic Customer Scenario
            ↓
 Prompt Version (V1 → V2 → V3 → V4)
            ↓
-LLM Execution (Live or Mock Provider)
+Model Generation (Live LLM or Deterministic Mock)
            ↓
-Multi-Layer Automated Evaluation (Layers 1-4)
+Multi-Layer Automated Evaluation (Layers 1 to 4)
            ↓
 Failure Detection & Taxonomy Mapping (F1..F8)
            ↓
@@ -26,110 +23,126 @@ Regression Testing & Benchmark Uplift Audit
 
 ---
 
-## 2. Key Capabilities
-- **200 Benchmark Scenarios:** Balanced across Standard, Ambiguous, Edge Cases, Multi-turn, Contradictory, Hallucination Traps, Adversarial Injection, and Escalation-Sensitive queries.
-- **Controlled Knowledge Base:** 50 synthetic operational ground truth facts covering UPI, EMIs, insurance claims, and mutual fund operations.
-- **Prompt Versioning & Unified Diff:** Side-by-side visual diffing comparing instructions between V1, V2, V3, and V4.
-- **Multi-Layer Defensive Evaluation:**
-  - *Layer 1:* Schema & decodability validation.
-  - *Layer 2:* Deterministic rule engine (`must_include`, `must_not_include`, format checks).
-  - *Layer 3:* Semantic alignment, context grounding, and multi-turn reference retention.
-  - *Layer 4:* LLM-as-judge scoring across 7 weighted dimensions with Pydantic JSON validation.
-- **Traceable Failure Taxonomy (F1..F8):** Hallucination, Instruction Failure, Inconsistency, Context Loss, Irrelevance, Unsupported Certainty, Formatting Failure, Routing/Escalation Failure.
-- **Interactive Prompt Debugger:** Modify prompt instructions in real-time and retest immediately against specific failing scenarios.
-- **Failure Fingerprint:** Trace a single scenario's behavior across all prompt iterations to prove whether a prompt change actually solved the root cause.
-- **Automated vs Manual Audit Calibration:** 30-case representative calibration set exposing agreement and divergence.
-- **SQL Analytics:** 6 production-grade SQL scripts featuring CTEs and window functions.
-- **Stable CSV Exports:** Complete exportability for BI dashboards and audit pipelines.
+## What the System Does
+
+1. **Benchmark Scenario Bank (200 Scenarios):** Real-world test cases covering Standard inquiries, Ambiguous inputs, Boundary edge cases, Multi-turn dialogues, Contradictory statements, Hallucination traps, Adversarial injection, and Escalation-sensitive events across 4 operational domains (Payments, Lending, Insurance, Investments).
+2. **Ground Truth Knowledge Base (50 Facts):** Synthetic operational reference rules defining settlement turnaround windows, fee structures, cancellation windows, and regulatory boundaries.
+3. **Prompt Versioning & Diffing:** Tracks iterative changes across 4 benchmark prompt versions (V1 Minimal, V2 Structured, V3 Grounded, V4 Operations-Safe) with unified line diffing and an audit change ledger.
+4. **Multi-Layer Defensive Evaluation:**
+   - **Layer 1 (Schema & Output):** Validates response presence, minimum word counts, decodability, and catches raw JSON leaks.
+   - **Layer 2 (Deterministic Rules):** Verifies required terminology, catches prohibited phrases, and verifies structured layout without invoking an LLM.
+   - **Layer 3 (Semantic & Consistency):** Token-level Jaccard grounding against reference context and cross-turn entity retention tracking.
+   - **Layer 4 (LLM-as-Judge):** Rubric scoring across 7 dimensions (Accuracy 20%, Groundedness 20%, Instruction Following 15%, Relevance 15%, Consistency 10%, Safety 10%, Clarity 10%) returning Pydantic-validated JSON.
+5. **Standardized Failure Taxonomy (F1..F8):** Categorizes failures into Hallucination (F1), Instruction Failure (F2), Logical Inconsistency (F3), Context Loss (F4), Irrelevance (F5), Unsupported Certainty (F6), Formatting Failure (F7), and Routing/Escalation Failure (F8).
+6. **Prompt Debugger & Live Retest Sandbox:** Inspects individual scenario failures, displays root cause evidence, allows real-time prompt edits, and retests immediately.
+7. **Failure Fingerprinting:** Traces how an individual scenario performs across V1, V2, V3, and V4 to verify whether an iterative prompt modification actually fixed the underlying issue.
+8. **Relational Database Lineage:** Full SQLAlchemy schema tracking runs, prompts, responses, evaluations, failure events, transcripts, and change ledgers in SQLite (or PostgreSQL via Docker Compose).
+9. **SQL Analytics Engine:** 6 SQL queries using CTEs and window functions to compute prompt uplift, category risk, and multi-turn context retention.
+10. **Automated vs Manual Audit Calibration:** 30 representative calibration cases evaluating concordance between automated scoring and manual review.
 
 ---
 
-## 3. Technology Stack
-- **Core:** Python 3.11+, PostgreSQL / SQLite, SQLAlchemy 2.0, Pydantic v2, PyYAML, Pandas.
-- **Application Console:** Streamlit with custom analyst design theme.
-- **Visualization:** Plotly.
-- **Quality & Testing:** Pytest, Ruff.
-- **Containerization:** Docker Compose.
+## Technical Stack
+
+- **Backend & Evaluation:** Python 3.11+, SQLAlchemy 2.0, Pydantic v2, Pandas, PyYAML, HTTPX
+- **Database:** SQLite (default for local zero-config runs), PostgreSQL (via Docker Compose)
+- **UI & Analytics:** Streamlit, Plotly
+- **Testing & Quality:** Pytest, Ruff
 
 ---
 
-## 4. Quickstart & Installation
+## Quickstart
 
-### Local Setup
+### 1. Installation
 ```bash
-# Clone the repository and navigate into FinEval
+git clone https://github.com/hriday-sobti/FinEval.git
 cd FinEval
 
-# Create and activate virtual environment (optional)
-python -m venv venv
-# Windows: venv\Scripts\activate | Unix: source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### Environment Configuration
-Copy `.env.example` to `.env`:
+### 2. Environment Configuration
+Copy the template configuration file:
 ```bash
 cp .env.example .env
 ```
-By default, `DATABASE_URL=sqlite:///./data/fineval.db` and `LLM_PROVIDER=mock`, allowing the full application to run without external dependencies or paid API keys.
+Default settings run with `DATABASE_URL=sqlite:///./data/fineval.db` and `LLM_PROVIDER=mock`, enabling the full application to run locally without external API keys or cloud dependencies.
 
-For Docker PostgreSQL:
+To use Docker PostgreSQL:
 ```bash
 docker compose up -d
-# Update DATABASE_URL in .env to:
+# Set DATABASE_URL in .env to:
 # postgresql+psycopg://fineval_user:fineval_password@localhost:5432/fineval_db
 ```
 
----
-
-## 5. Running FinEval
-
-### 1. Seed Database & Initial Benchmark Runs
-```bash
-python -m scripts.seed_database
-```
-Seeds 50 knowledge facts, 200 scenarios, 4 prompt versions, change ledger, and executes baseline core benchmark runs.
-
-### 2. Run Smoke Benchmark
-```bash
-python -m scripts.run_smoke_test
-```
-
-### 3. Launch Streamlit Analyst Console
+### 3. Launching the Console
 ```bash
 python -m streamlit run app/streamlit_app.py
 ```
-Open your browser at `http://localhost:8501`.
+Open your browser at `http://localhost:8501`. On first run, the app automatically checks the database and seeds the 200 scenarios, knowledge base, prompt versions, and baseline runs.
 
-### 4. Run Test Suite & Linting
+### 4. Running Benchmarks via CLI
 ```bash
+# Run deterministic smoke test (6 core cases)
+python -m scripts.run_smoke_test
+
+# Run core benchmark (60 balanced cases) on Prompt V4
+python -m scripts.run_benchmark --level core --prompt V4
+
+# Run full benchmark (all 200 cases)
+python -m scripts.run_benchmark --level full --prompt V4
+```
+
+### 5. Running Tests & Linting
+```bash
+# Run test suite
 python -m pytest -v
+
+# Run linter
 python -m ruff check .
+
+# Validate dataset schema and category distributions
+python -m scripts.validate_dataset
 ```
 
 ---
 
-## 6. Repository Layout
+## Repository Structure
+
 ```text
 FinEval/
-├── app/                  # Streamlit Analyst Console & Page Views
-│   ├── streamlit_app.py  # Main application entry point
-│   ├── components/       # Custom cards, badges, and CSS
-│   └── pages/            # 7 Dedicated operational console views
-├── config/               # Scoring weights, thresholds, and provider configs
+├── app/                  # Streamlit analyst console
+│   ├── streamlit_app.py  # Application entrypoint
+│   ├── components/       # Custom styling, badges, and layout cards
+│   └── pages/            # 7 console views
+│       ├── quality_overview.py    # KPI metrics and Plotly analytical charts
+│       ├── benchmark_runner.py    # Bulk execution and CSV upload validator
+│       ├── prompt_lab.py          # Unified prompt diff and change ledger
+│       ├── failure_explorer.py    # Root-cause diagnostic card ("Why Did It Fail?")
+│       ├── transcript_explorer.py # Chronological conversation viewer
+│       ├── prompt_debugger.py     # Prompt editor sandbox & failure fingerprint
+│       └── reports_and_export.py  # Manual audit calibration and CSV downloads
+├── config/               # Scoring weights, thresholds, and model parameters
 ├── data/                 # Benchmark scenarios, knowledge base, prompt versions
 ├── docs/                 # Architecture, evaluation methodology, failure taxonomy
-├── prompts/              # System prompt files (V1, V2, V3, V4, Judge)
-├── reports/              # Executive audit report (Markdown and PDF)
-├── scripts/              # Seed, validation, smoke test, and CLI benchmark tools
-├── sql/                  # 6 Production analytical SQL queries
-├── src/                  # Application domain, engine, llm, database, and services
-└── tests/                # Unit and integration test suite
+├── prompts/              # System prompt versions (V1, V2, V3, V4, Judge)
+├── reports/              # Audit reports in Markdown and PDF
+├── scripts/              # Seed, validation, smoke test, and benchmark CLI scripts
+├── sql/                  # 6 SQL analytics scripts using CTEs and window functions
+├── src/                  # Application source code
+│   ├── analysis/         # Prompt comparison, diff engine, regression detector
+│   ├── database/         # SQLAlchemy models, connection, and session management
+│   ├── domain/           # Scenario and failure taxonomy schemas
+│   ├── evaluation/       # Layers 1 to 4 evaluation engine and scoring rules
+│   ├── ingestion/        # Knowledge base and scenario generators
+│   ├── llm/              # Provider abstraction (Mock and Live implementations)
+│   ├── services/         # Bulk benchmark runner and execution pipeline
+│   └── utils/            # Centralized settings and structured logging
+└── tests/                # Pytest unit and error handling suites
 ```
 
 ---
 
-## 7. Absolute Integrity Notice
-All scenarios, user profiles, transaction reference numbers, accounts, and policies in this repository are **explicitly synthetic and fictional**. They do not represent real-world customer data or proprietary policies of any organization. FinEval is an operational quality evaluation laboratory.
+## Synthetic Data Notice
+
+All customer queries, account numbers, reference tokens (`REF-`, `LN-`, `CLM-`), and institutional policies in this repository are synthetic and fictional. They are constructed solely to evaluate LLM response quality, failure modes, and prompt instructions under controlled operational conditions.
